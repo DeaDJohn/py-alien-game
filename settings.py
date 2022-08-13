@@ -22,3 +22,4 @@ class Settings:
         self.fleet_drop_speed = 10
         # fleet_direction = 1 representa derecha; -1 representa izquierda
         self.fleet_direction = 1
+        self.alien_max_rows = 5
