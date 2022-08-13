@@ -50,4 +50,8 @@ class Ship(Sprite):
         """Centra la nave en la parte inferior de la pantalla."""
         self.rect.midbottom = self.screen_rect.midbottom
         self.x = float(self.rect.x)
+
+    def icon_scoreboard(self):
+        """Dibuja la nave en el icono del marcador."""
+        self.image = pygame.transform.scale(self.image, (50, 50))
         
