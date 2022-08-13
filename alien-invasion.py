@@ -3,6 +3,7 @@ import pygame
 from settings import Settings
 from ship import Ship
 from bullet import Bullet
+from alien import Alien
 
 class AlienInvasion :
     """Clase general para gestionar los recursos y el comportamiento del juego."""
@@ -19,6 +20,9 @@ class AlienInvasion :
         
         self.ship = Ship(self)
         self.bullet = pygame.sprite.Group()
+        self.alien = pygame.sprite.Group()
+
+        self._create_fleet()
         
         # Color de fondo
         self.bg_color = self.setting.bg_color
@@ -60,6 +64,7 @@ class AlienInvasion :
         self.ship.blitme()
         for bullet in self.bullet.sprites():
             bullet.draw_bullet()
+        self.alien.draw(self.screen)
 
 
     def _check_keydown_events(self,event):
@@ -87,6 +92,34 @@ class AlienInvasion :
         if len(self.bullet) < self.setting.bullets_allowed:
             new_bullet = Bullet(self)
             self.bullet.add(new_bullet)
+
+
+    def _create_fleet(self):
+        """Crea una flota de aliens"""
+        alien = Alien(self)
+
+        alien_width, alien_height = alien.rect.size
+        available_space_x = self.setting.screen_width - (2 * alien_width)
+        number_aliens_x = available_space_x // (2 * alien_width)
+
+        # Determina el numero de filas de aliens que caben en la pantalla.
+        ship_height = self.ship.rect.height
+        available_space_y = (self.setting.screen_height - (3 * alien_height) - ship_height) 
+        number_rows = available_space_y // (2 * alien_height)
+        # Crea la flota de aliens.
+        for row_number in range(number_rows):
+            for alien_number in range(number_aliens_x):
+                self._create_alien(alien_number, row_number)
+    
+    
+    def _create_alien(self, alien_number, row_number):
+        """Crea un alien y lo coloca en la fila"""
+        alien = Alien(self)
+        alien_width, alien_height = alien.rect.size
+        alien.x = alien_width + 2 * alien_width * alien_number
+        alien.rect.x = alien.x
+        alien.rect.y = alien.rect.height + 2 * alien.rect.height * row_number
+        self.alien.add(alien)
 
 
 if __name__ == '__main__':

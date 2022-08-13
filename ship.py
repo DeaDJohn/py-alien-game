@@ -15,7 +15,7 @@ class Ship:
         self.image = pygame.image.load("images/ship.bmp")
         self.image = pygame.transform.scale(self.image, (50, 50))
         self.rect = self.image.get_rect()
-        print(self.image.get_rect())
+
         
         # Coloca inicialmente cada nave nueva en el centro de la parte inferior de la pantalla
         self.rect.midbottom = self.screen_rect.midbottom
