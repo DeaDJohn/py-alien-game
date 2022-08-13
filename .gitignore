@@ -35,6 +35,7 @@
 # Other
 envdev*
 venv/
+venv*
 .virtualenv*
 buildconfig/manylinux-build/wheelhouse/
 anenv
