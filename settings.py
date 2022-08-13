@@ -8,18 +8,24 @@ class Settings:
         self.bg_color = (230, 230, 230)
         
         # Configuración de la nave
-        self.ship_speed = 1.5
+        self.ship_speed = 5
+        self.ship_limit = 3
+        self.ship_width = 100
+        self.ship_height = 100
+
 
         # Configuración de la bala
-        self.bullet_speed = 1.0
+        self.bullet_speed = 10.0
         self.bullet_width = 3
         self.bullet_height = 15
         self.bullet_color = (60, 60, 60)
-        self.bullets_allowed = 3
+        self.bullets_allowed = 5
 
         #configuración del alien
-        self.alien_speed = 1.0
+        self.alien_speed = 5
         self.fleet_drop_speed = 10
         # fleet_direction = 1 representa derecha; -1 representa izquierda
         self.fleet_direction = 1
         self.alien_max_rows = 5
+        self.alien_width = 100
+        self.alien_height = 100

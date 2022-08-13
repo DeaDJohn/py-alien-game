@@ -4,6 +4,8 @@ from settings import Settings
 from ship import Ship
 from bullet import Bullet
 from alien import Alien
+from time  import sleep
+from game_stats import GameStats
 
 class AlienInvasion :
     """Clase general para gestionar los recursos y el comportamiento del juego."""
@@ -17,6 +19,9 @@ class AlienInvasion :
         self.setting.screen_height = self.screen.get_rect().height
         self.setting.screen_width = self.screen.get_rect().width
         pygame.display.set_caption("Alien invasion")
+
+        # Crea una instancia para guardas las estadísticas del juego
+        self.stats = GameStats(self)
         
         self.ship = Ship(self)
         self.bullet = pygame.sprite.Group()
@@ -33,17 +38,14 @@ class AlienInvasion :
         while True:
             # Busca eventos de teclado y raton
             self._check_events()
-            # Redibuja la pantalla en cada paso por el bucle
-            self._update_screen()
-            self.ship.update()
-            self.bullet.update()
-            self._update_alien()
-
-            # Se deshace de las balas que han salido de la pantalla.
-            for bullet in self.bullet.copy():
-                if bullet.rect.bottom <= 0:
-                    self.bullet.remove(bullet)
+            print(self.stats.game_active)
+            if self.stats.game_active:
+                # Redibuja la pantalla en cada paso por el bucle
+                self.ship.update()
+                self._update_bullets()
+                self._update_alien()
             
+            self._update_screen()
             # Hace visible la ultima pantalla dibujada
             pygame.display.flip()
 
@@ -68,11 +70,39 @@ class AlienInvasion :
         self.alien.draw(self.screen)
 
 
+    def _update_bullets(self):
+        """Actualiza la posición de las balas y las borra si han salido de la pantalla."""
+        self.bullet.update()
+        #Se deshace e las balas que han esaparecido
+        for bullet in self.bullet.copy():
+            if bullet.rect.bottom <= 0:
+                self.bullet.remove(bullet)
+        # Busca balas que hayan dado a los aliens
+        # Si hay, se deshace de la bala y del alien
+        self._check_bullet_alien_collisions()
+
+
+    def _check_bullet_alien_collisions(self):
+        """Responde a las colisiones bala-alien."""
+        # Retirda todas las balas y aliens que ha chocado.
+        collisions = pygame.sprite.groupcollide( self.bullet, self.alien, True, True)
+        if not self.alien:
+            # Destruye las balas exixtentes y crea una flota nueva
+            self.bullet.empty()
+            self._create_fleet()
+
 
     def _update_alien(self):
         """Comprueba si la flota ha llegado al final de la pantalla."""
         self._check_fleet_edges()
         self.alien.update()
+
+        # Busca colisiones alien-nae.
+        if pygame.sprite.spritecollideany(self.ship, self.alien):
+            self._ship_hit()
+
+        # Busca si ha llegado algun alien al fondo de la pantalla.
+        self._check_aliens_bottom()
 
 
     def _check_keydown_events(self,event):
@@ -151,6 +181,36 @@ class AlienInvasion :
             alien.rect.y += self.setting.fleet_drop_speed
         self.setting.fleet_direction *= -1
 
+
+
+    def _ship_hit(self):
+        """Responde al impacto de un alien en la nave."""
+        if self.stats.ships_left > 0:
+            #Disminuye ship_left.
+            self.stats.ships_left -= 1
+
+            # Se deshace de los aliens y balas restantes.
+            self.alien.empty()
+            self.bullet.empty()
+
+            # Crea una nueva flota y centra la nave
+            self._create_fleet()
+            self.ship.center_ship()
+
+            #Pausa.
+            sleep(0.5)
+        else:
+            self.stats.game_active = False
+
+    
+
+    def _check_aliens_bottom(self):
+        """Comprueba si algún alien ha llegado al fondo de la pantalla."""
+        screen_rect = self.screen.get_rect()
+        for alien in self.alien.sprites():
+            if  alien.rect.bottom >= screen_rect.bottom:
+                # Trata esto como si la nave hubise sido alcanzada
+                self._ship_hit()
 
 if __name__ == '__main__':
     # Hace una instancia al juego y lo ejecuta

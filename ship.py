@@ -13,7 +13,7 @@ class Ship:
         
         # Carga la imagen de la nave y obtiene su rect
         self.image = pygame.image.load("images/ship.bmp")
-        self.image = pygame.transform.scale(self.image, (50, 50))
+        self.image = pygame.transform.scale(self.image, (self.settings.ship_width, self.settings.ship_height))
         self.rect = self.image.get_rect()
 
         
@@ -43,4 +43,10 @@ class Ship:
     def blitme(self):
         """Dibuja la nave en su ubucación inicial"""
         self.screen.blit(self.image, self.rect)
+    
+
+    def center_ship(self):
+        """Centra la nave en la parte inferior de la pantalla."""
+        self.rect.midbottom = self.screen_rect.midbottom
+        self.x = float(self.rect.x)
         
