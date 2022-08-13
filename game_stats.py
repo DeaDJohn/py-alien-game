@@ -6,9 +6,14 @@ class GameStats:
         self.settings = ai_game.setting
         self.reset_stats()
 
-        # Inicia Alien Invasion en estado activo.
-        self.game_active = True
+        # Inicia Alien Invasion en estado inactivo.
+        self.game_active = False
+
+         # La puntuación mas alta no debería restablecerse nunca.
+        self.high_score = 0
 
     def reset_stats(self):
         """Inicializa las estadísticas que se pueden resetear en el juego."""
         self.ships_left = self.settings.ship_limit
+        self.score = 0
+        self.level = 1
