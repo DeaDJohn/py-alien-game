@@ -37,6 +37,7 @@ class AlienInvasion :
             self._update_screen()
             self.ship.update()
             self.bullet.update()
+            self._update_alien()
 
             # Se deshace de las balas que han salido de la pantalla.
             for bullet in self.bullet.copy():
@@ -67,6 +68,13 @@ class AlienInvasion :
         self.alien.draw(self.screen)
 
 
+
+    def _update_alien(self):
+        """Comprueba si la flota ha llegado al final de la pantalla."""
+        self._check_fleet_edges()
+        self.alien.update()
+
+
     def _check_keydown_events(self,event):
         """Responde a pulsaciones de teclas"""
         if event.key == pygame.K_RIGHT:
@@ -74,6 +82,8 @@ class AlienInvasion :
         elif event.key == pygame.K_LEFT:
             self.ship.moving_left = True
         elif event.key == pygame.K_q:
+            sys.exit()
+        elif event.key == pygame.K_ESCAPE:
             sys.exit()
         elif event.key == pygame.K_SPACE:
             self._fire_bullet()
@@ -120,6 +130,21 @@ class AlienInvasion :
         alien.rect.x = alien.x
         alien.rect.y = alien.rect.height + 2 * alien.rect.height * row_number
         self.alien.add(alien)
+
+
+    def _check_fleet_edges(self):
+        """Responde adecuadamente sii algún alien ha llegado a un borde."""
+        for alien in self.alien.sprites():
+            if alien.check_edges():
+                self._change_fleet_direction()
+                break
+    
+    
+    def _change_fleet_direction(self):
+        """Baja toda la flota y cambia su dirección."""
+        for alien in self.alien.sprites():
+            alien.rect.y += self.setting.fleet_drop_speed
+        self.setting.fleet_direction *= -1
 
 
 if __name__ == '__main__':
